@@ -23,6 +23,9 @@ import java.io.Serializable;
 import javax.persistence.JoinTable;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @SuppressWarnings("serial")
@@ -32,7 +35,11 @@ ${class.visibility} class ${class.name?cap_first} implements Serializable {
 
 <#list properties as property>
    <#if property.upper == 1 && property.name!="id${class.name?cap_first}" && (property.type!='date' && property.type!='int' && property.type!='long' && property.type!='String'&& property.type!='Integer' && property.type!='Long') >   
-   @ManyToOne(cascade=CascadeType.ALL)
+  /*
+   @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+   @JsonIdentityReference(alwaysAsId = true)
+   */
+   @ManyToOne//(cascade=CascadeType.ALL)
    @JoinColumn(name="id${property.name}")
    ${property.visibility} ${property.type} ${property.name}; 
    </#if>

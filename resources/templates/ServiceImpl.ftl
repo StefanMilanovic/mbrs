@@ -19,8 +19,8 @@ public class ${class.name?cap_first}ServiceImpl implements ${class.name?cap_firs
 	private ${class.name?cap_first}Repository ${class.name?uncap_first}Repository;
 	
 	@Override
-	public ${class.name?cap_first} findOne(Integer id) {
-		return ${class.name?uncap_first}Repository.findOne(id);
+	public ${class.name?cap_first} findById(Integer id) {
+		return ${class.name?uncap_first}Repository.findById(id).get();
 	}
 
 	@Override
@@ -35,7 +35,7 @@ public class ${class.name?cap_first}ServiceImpl implements ${class.name?cap_firs
 
 	@Override
 	public ${class.name?cap_first} delete(Integer id) {
-		${class.name?cap_first} ${class.name?uncap_first} = ${class.name?uncap_first}Repository.findOne(id);
+		${class.name?cap_first} ${class.name?uncap_first} = ${class.name?uncap_first}Repository.findById(id).get();
 		if(${class.name?uncap_first} == null){
 			throw new IllegalArgumentException("Pokusaj brisanja nepostojeceg entiteta.");
 		}

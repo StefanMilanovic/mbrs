@@ -10,7 +10,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import mbrs.aop.AOPService;
 <#list classes as c>
 	<#list properties as property>
 		<#if property.upper == 1 >
@@ -37,7 +40,7 @@ public class  ${class.name?cap_first}Controller {
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	public ResponseEntity<${class.name?cap_first}> get${class.name?cap_first}(@PathVariable Integer id) {
-		${class.name?cap_first} ${class.name?uncap_first} = ${class.name?uncap_first}Service.findOne(id);
+		${class.name?cap_first} ${class.name?uncap_first} = ${class.name?uncap_first}Service.findById(id);
 				
 		if (${class.name?uncap_first} == null) {
 			return new ResponseEntity<${class.name?cap_first}>(${class.name?uncap_first}, HttpStatus.NOT_FOUND);
@@ -58,26 +61,36 @@ public class  ${class.name?cap_first}Controller {
 	}
 	
 	@RequestMapping(value="/izbrisi/{id}", method = RequestMethod.DELETE)
-	public ResponseEntity<${class.name?cap_first}> izbrisi(@PathVariable Integer id) {
-		${class.name?cap_first} ${class.name?uncap_first} = ${class.name?uncap_first}Service.findOne(id);	
+	public String izbrisi(@PathVariable Integer id) {
+		${class.name?cap_first} ${class.name?uncap_first} = ${class.name?uncap_first}Service.findById(id);	
 		
-		if(${class.name?uncap_first} != null) {
-			${class.name?uncap_first}Service.delete(${class.name?uncap_first}.getId());
-			return new ResponseEntity<${class.name?cap_first}>(${class.name?uncap_first}, HttpStatus.OK);
+		<#list properties as p><#if p.upper != 1 >
+		if(!${class.name?uncap_first}.get${p.name?cap_first}s().isEmpty()) {
+		
+			
+			System.out.println("\n\n\t\t ${class.name?cap_first}  se ne sme obrisati.");
+			return "${class.name?cap_first}  se ne sme obrisati.";
 		}
+		 </#if>
+		 </#list>
 		
-		return new ResponseEntity<${class.name?cap_first}>(${class.name?uncap_first}, HttpStatus.NOT_FOUND);
+		${class.name?uncap_first}Service.delete(${class.name?uncap_first}.getId());
+		return "Uspesno brisanje";
 	}
 	
 	@RequestMapping(value = "/dodaj<#list properties as property><#if property.upper == 1 && property.type !='String' && property.type !='Integer'>/{id${property.name?cap_first}}</#if></#list>", method = RequestMethod.POST)
 	public ResponseEntity<${class.name?cap_first}> dodaj(<#list properties as property><#if property.upper == 1 && property.type !='String' && property.type !='Integer'>@PathVariable Integer id${property.name?cap_first}, </#if></#list>@RequestBody ${class.name?cap_first} request) {			
+			ApplicationContext appContext = new ClassPathXmlApplicationContext("aopConfig.xml");	
+			AOPService aopSI = (AOPService) appContext.getBean("aopSI");
+			aopSI.printMessage();
+			
 			${class.name?cap_first} ${class.name?uncap_first} = new ${class.name?cap_first}();
 			
 			<#list properties as property><#if property.type =='String'>${class.name?uncap_first}.set${property.name?cap_first}(request.get${property.name?cap_first}());
 			</#if></#list>
 			
 			<#list properties as property><#if property.upper == 1 && property.type !='String' && property.type !='Integer'>
-			${class.name?uncap_first}.set${property.name?cap_first}(${property.name?uncap_first}Service.findOne(id${property.name?cap_first}));			
+			${class.name?uncap_first}.set${property.name?cap_first}(${property.name?uncap_first}Service.findById(id${property.name?cap_first}));			
 			</#if></#list>
 			
 			${class.name?uncap_first}Service.save(${class.name?uncap_first});
@@ -88,7 +101,7 @@ public class  ${class.name?cap_first}Controller {
 	public ResponseEntity<${class.name?cap_first}> azuriraj(@PathVariable Integer id,
 	<#list properties as property><#if property.upper == 1 && property.type !='String' && property.type !='Integer'>@PathVariable Integer id${property.name?cap_first}, </#if></#list>@RequestBody ${class.name?cap_first} request) {			
 
-		${class.name?cap_first} ${class.name?uncap_first} = ${class.name?uncap_first}Service.findOne(id);
+		${class.name?cap_first} ${class.name?uncap_first} = ${class.name?uncap_first}Service.findById(id);
 			
 		if(${class.name?uncap_first} != null) {
 		
@@ -98,7 +111,7 @@ public class  ${class.name?cap_first}Controller {
 		</#list>
 		
 		<#list properties as property><#if property.upper == 1 && property.type !='String' && property.type !='Integer'>
-			${class.name?uncap_first}.set${property.name?cap_first}(${property.name?uncap_first}Service.findOne(id${property.name?cap_first}));
+			${class.name?uncap_first}.set${property.name?cap_first}(${property.name?uncap_first}Service.findById(id${property.name?cap_first}));
 		</#if>	
 		</#list>
 		

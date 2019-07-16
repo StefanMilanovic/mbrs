@@ -87,10 +87,18 @@
 								red = "Dostupni entiteti:";
 								$("#prazno").append(red);
 								$("#prazno").show();
-								$("#tabela").append("<thead><tr><#list properties as pTable><#if pTable.type =='String'><th scope=\"col\" class=\"text-center\">${pTable.name?cap_first}</th><#elseif pTable.upper != 1 ><th scope=\"col\" class=\"text-center\"></#if></#list><th scope=\"col\" class=\"text-center\"><th scope=\"col\" class=\"text-center\"></th></th></tr></thead><tbody>");
-								
-								for(i = 0; i < data.length; i++) {					
-								noviRed = "<tr>"<#list properties as pRow><#if pRow.type =='String' >+"<td>"+data[i].${pRow.name?uncap_first}+"</td>"</#if></#list>+<#list properties as pRowSec><#if pRowSec.upper != 1 >"<td><input id=\"dugme${pRowSec.name?cap_first}\" type=\"button\" class=\"btn btn-primary\" style=\"float:right\" value=\"${pRowSec.name?cap_first}\" onclick =\"${pRowSec.name?uncap_first}(" + data[i].id + ")\"></td>" + </#if></#list> "<td><input id=\"dugmeAzuriraj1\" type=\"button\" class=\"btn btn-warning\" style=\"float:right\" value=\"Azuriraj\" onclick =\"azuriraj(" + data[i].id + ")\">"+ "</td><td>" + "<input id=\"dugmeIzbrisi\" type=\"button\" class=\"btn btn-danger\" style=\"float:right\" value=\"Izbrisi\" onclick =\"izbrisi(" + data[i].id + ")\"></td>"+"</tr>"
+								<#if class.name?cap_first == 'Cena'>
+									$("#tabela").append("<thead><tr><#list properties as pTable><#if pTable.type =='String'><th scope=\"col\" class=\"text-center\">${pTable.name?cap_first}</th><#elseif pTable.upper != 1 ><th scope=\"col\" class=\"text-center\"></#if></#list><th scope=\"col\" class=\"text-center\"><th scope=\"col\" class=\"text-center\"><th scope=\"col\" class=\"text-center\"></th></th></tr></thead><tbody>");
+								<#else>
+									$("#tabela").append("<thead><tr><#list properties as pTable><#if pTable.type =='String'><th scope=\"col\" class=\"text-center\">${pTable.name?cap_first}</th><#elseif pTable.upper != 1 ><th scope=\"col\" class=\"text-center\"></#if></#list><th scope=\"col\" class=\"text-center\"><th scope=\"col\" class=\"text-center\"></th></th></tr></thead><tbody>");
+								</#if>
+								for(i = 0; i < data.length; i++) {
+								<#if class.name?cap_first == 'Cena'>
+									noviRed = "<tr>"<#list properties as pRow><#if pRow.type =='String' >+"<td>"+data[i].${pRow.name?uncap_first}+"</td>"</#if></#list>+<#list properties as pRowSec><#if pRowSec.upper != 1 >"<td><input id=\"dugme${pRowSec.name?cap_first}\" type=\"button\" class=\"btn btn-primary\" style=\"float:right\" value=\"${pRowSec.name?cap_first}\" onclick =\"${pRowSec.name?uncap_first}(" + data[i].id + ")\"></td>" + </#if></#list> "<td><input id=\"dugmeAzuriraj1\" type=\"button\" class=\"btn btn-warning\" style=\"float:right\" value=\"Azuriraj\" onclick =\"azuriraj(" + data[i].id + ")\">"+ "</td><td>" + "<input id=\"dugmeIzbrisi\" type=\"button\" class=\"btn btn-danger\" style=\"float:right\" value=\"Izbrisi\" onclick =\"izbrisi(" + data[i].id + ")\"></td>"+"<td><input id=\"dugmeSmanjiCenu\" type=\"button\" class=\"btn btn-default\" style=\"float:right\" value=\"Smanji cenu\" onclick =\"smanjiCenu(" + data[i].id + ")\"></td>"+"</tr>"
+								<#else>
+									noviRed = "<tr>"<#list properties as pRow><#if pRow.type =='String' >+"<td>"+data[i].${pRow.name?uncap_first}+"</td>"</#if></#list>+<#list properties as pRowSec><#if pRowSec.upper != 1 >"<td><input id=\"dugme${pRowSec.name?cap_first}\" type=\"button\" class=\"btn btn-primary\" style=\"float:right\" value=\"${pRowSec.name?cap_first}\" onclick =\"${pRowSec.name?uncap_first}(" + data[i].id + ")\"></td>" + </#if></#list> "<td><input id=\"dugmeAzuriraj1\" type=\"button\" class=\"btn btn-warning\" style=\"float:right\" value=\"Azuriraj\" onclick =\"azuriraj(" + data[i].id + ")\">"+ "</td><td>" + "<input id=\"dugmeIzbrisi\" type=\"button\" class=\"btn btn-danger\" style=\"float:right\" value=\"Izbrisi\" onclick =\"izbrisi(" + data[i].id + ")\"></td>"+"</tr>"
+								</#if>
+													
 								$("#tabela").append(noviRed);
 								}
 								$("#tabela").append("</tbody>");
@@ -160,6 +168,8 @@
 					<#list properties as p>
 					<#if p.type =='String' >
 						$("#${p.name?uncap_first}A").val(${class.name?uncap_first}.${p.name?uncap_first});
+					<#elseif p.upper == 1 && p.type !='Integer' >
+						$("#${p.name?uncap_first}").val(''+${class.name?uncap_first}.${p.name?uncap_first}+'');
 					</#if>
 					</#list>	
 					});
@@ -188,8 +198,8 @@
 					$.ajax({
 						url: "/${class.name?uncap_first}/izbrisi/" + id,
 						type: "DELETE",
-						success: function(){
-							alert('Uspesno brisanje.');
+						success: function(data){
+							alert(data);
 							location.href = "/${class.name?uncap_first}.html"
 						}
 					});
@@ -200,7 +210,23 @@
 					function ${property.name?uncap_first}(id) {
 						location.href = "/${property.type?uncap_first}Filter.html?" + "${class.name?cap_first}" + ":"  + id
 					}</#if></#list>
-									
+							
+							
+							
+							
+							
+				<#if class.name?cap_first == 'Cena'>		
+				function smanjiCenu(id) {
+					$.ajax({
+						url: "/rucnoPisanController/smanjiCenu/" + id,
+						type: "PUT",
+						success: function(){
+							alert('Uspesno smanjenje cene.');
+							location.href = "cena.html"
+						}
+					});
+				}		
+				</#if>				
 				</script>
 				
 		</body>

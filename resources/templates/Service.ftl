@@ -17,7 +17,7 @@ import mbrs.model.${c.name?cap_first};
 @Service
 public interface ${class.name?cap_first}Service {
 
-	${class.name?cap_first} findOne(Integer id);
+	${class.name?cap_first} findById(Integer id);
 	List<${class.name?cap_first}> findAll();
 	
 	${class.name?cap_first} save(${class.name?cap_first} ${class.name?uncap_first});	
